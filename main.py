@@ -32,6 +32,12 @@ def main(argv):
     output = Path(argv[1]) if len(argv) > 1 else DEFAULT_OUTPUT
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(POEM, encoding="utf-8")
+    # Read it back and verify the exact bytes before reporting success,
+    # so a partial or mangled write can never pass silently.
+    if output.read_text(encoding="utf-8") != POEM:
+        print("mismatch: output does not match the poem", file=sys.stderr)
+        return 1
+    print(f"{POEM} ({len(POEM)} chars)")
     return 0
 
 
